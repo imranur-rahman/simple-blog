@@ -2,6 +2,37 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+class Comment extends Component{
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            text : props.text,
+            showComment : true
+        }
+    }
+
+    handleRemove(evt) {
+        this.setState ({
+            [evt.target.name] : false
+        });
+    }
+
+    render() {
+        if(this.state.showComment) {
+            return (
+                <div>
+                    <div>{this.text}</div>
+                    <input type="submit" name="showComment" value="Remove" onClick={this.handleRemove}/>
+                </div>
+            );
+        }
+        else {
+            return (<div></div>);
+        }
+    }
+}
+
 class Blog extends Component{
     constructor (props) {
         super(props);
@@ -10,15 +41,59 @@ class Blog extends Component{
         this.state = {
             title : props.title,
             text : props.text,
+            comment : '',
+            comments : [],
         }
-        this.title = props.title;
-        this.text = props.text;
-        this.comment = [];
+    }
+
+    handleSubmit (evt) {
+        const newArray = this.state.comments.concat(new Comment({text : this.state.comment}));
+        this.setState ({
+            comment : '',
+            comments : newArray
+        });
+    }
+
+    handleChange (evt) {
+        this.setState ({
+            [evt.target.name] : evt.target.value
+        });
     }
 
     render () {
         return (
-            <li key={this.state.title}>{this.state.text}</li>
+            <li key={this.state.title}>{this.state.text}
+            {/*<div key={this.state.title}>*/}
+                {/*<div key={this.state.title}>*/}
+                    {/*<div>{this.state.title}</div>*/}
+                    {/*<div>{this.state.text}</div>*/}
+                {/*</div>*/}
+
+                {/*/!*<form className="form">*!/*/}
+
+                    {/*/!*<fieldset>*!/*/}
+
+                        {/*/!*<legend>Add a comment</legend>*!/*/}
+
+                        {/*/!*<input type="text" name="comment" onChange={this.handleChange} size="100" required />*!/*/}
+                        {/*/!*<br></br><br></br>*!/*/}
+
+                        {/*/!*<input type="submit" value="Submit" onClick={this.handleSubmit} />*!/*/}
+
+                    {/*/!*</fieldset>*!/*/}
+
+                {/*/!*</form>*!/*/}
+
+                {/*/!*<div>*!/*/}
+                    {/*/!*{*!/*/}
+                        {/*/!*this.state.comments.map((item) => {*!/*/}
+                            {/*/!*return (<Comment key={item.text} text={item.text}/>);*!/*/}
+                        {/*/!*})*!/*/}
+                    {/*/!*}*!/*/}
+                {/*/!*</div>*!/*/}
+
+            {/*</div>*/}
+            </li>
         );
     }
 }
@@ -34,6 +109,7 @@ class App extends Component {
         super();
         this.blog = [];
         //this.blog = [{title: "ass", text: "ok ok"}, {title: "shit", text: "oh no"}];
+        //new Blog() evabe na korar jonno o bujhte pare nai, ei kon type er object
         this.state = {
             blog_title: '',
             blog_text: ''
@@ -56,12 +132,16 @@ class App extends Component {
         this.blog.push(new_blog);
         console.log(this.blog.length);
         console.log(new_blog);
+        this.setState ({
+            title : '',
+            text : ''
+        });
         evt.preventDefault(); // preventing the submit button to cause page reload
     }
 
     callAllBlogs = () => {
         const ret = this.blog.map((item) => {
-            console.log(item);
+            //console.log(item);
             // return (
             //     <ListItem key={item.title} title={item.title} text={item.text}/>
             // );
@@ -72,7 +152,7 @@ class App extends Component {
     };
 
     render () {
-        let ret = this.callAllBlogs();
+        //let ret = this.callAllBlogs();
         //console.log(ret);
         return (
             <div>
@@ -96,7 +176,13 @@ class App extends Component {
 
                 </form>
 
-                <ul>{ret}</ul>
+                <div>
+                    {
+                        this.blog.map((item) => {
+                            return (<Blog key={item.title} title={item.title} text={item.text}> </Blog>);
+                        })
+                    }
+                </div>
 
             </div>
 
