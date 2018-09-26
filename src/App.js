@@ -2,30 +2,38 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+class Blog extends Component{
+    constructor (props) {
+        super(props);
+        // console.log(props.title);
+        // console.log(props.text);
+        this.state = {
+            title : props.title,
+            text : props.text,
+        }
+        this.title = props.title;
+        this.text = props.text;
+        this.comment = [];
+    }
+
+    render () {
+        return (
+            <li key={this.state.title}>{this.state.text}</li>
+        );
+    }
+}
+
+function ListItem(props) {
+    // Correct! There is no need to specify the key here:
+    return <li>{props.text}</li>;
+}
+
 class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
-    );
-  }
-}
-
-class Comment {
-    
-}
-
-class Blog extends Component {
 
     constructor () {
         super();
+        this.blog = [];
+        //this.blog = [{title: "ass", text: "ok ok"}, {title: "shit", text: "oh no"}];
         this.state = {
             blog_title: '',
             blog_text: ''
@@ -43,32 +51,57 @@ class Blog extends Component {
     }
 
     handleSubmit (evt) {
-        alert(this.state.blog_title + '' + this.state.blog_text);
+        //alert(this.state.blog_title + '' + this.state.blog_text);
+        var new_blog = new Blog({title: this.state.blog_title, text: this.state.blog_text});
+        this.blog.push(new_blog);
+        console.log(this.blog.length);
+        console.log(new_blog);
+        evt.preventDefault(); // preventing the submit button to cause page reload
     }
 
+    callAllBlogs = () => {
+        const ret = this.blog.map((item) => {
+            console.log(item);
+            // return (
+            //     <ListItem key={item.title} title={item.title} text={item.text}/>
+            // );
+            return (<Blog key={item.title} title={item.title} text={item.text}/>);
+
+        });
+        return (<div>{ret}</div>);
+    };
+
     render () {
+        let ret = this.callAllBlogs();
+        //console.log(ret);
         return (
-            <form className="form" onSubmit={this.handleSubmit}>
+            <div>
 
-                <fieldset>
+                <form className="form" onSubmit={this.handleSubmit}>
 
-                    <legend>Add new blog!!!</legend>
-                    Title<br></br>
-                    <input type="title" name="blog_title" onChange={this.handleChange} required /><br></br>
+                    <fieldset>
 
-                    Text<br></br>
-                    <input type="text" name="blog_text" onChange={this.handleChange} size="100" required />
-                    <br></br><br></br>
+                        <legend>Add new blog!!!</legend>
 
-                    <input type="submit" value="Submit" />
+                        Blog Title<br></br>
+                        <input type="title" name="blog_title" onChange={this.handleChange} required /><br></br>
 
-                </fieldset>
+                        Blog Text<br></br>
+                        <input type="text" name="blog_text" onChange={this.handleChange} size="100" required />
+                        <br></br><br></br>
 
-            </form>
+                        <input type="submit" value="Submit" />
+
+                    </fieldset>
+
+                </form>
+
+                <ul>{ret}</ul>
+
+            </div>
+
         );
     }
 }
 
-export default Blog;
-
-//export default App;
+export default App;
